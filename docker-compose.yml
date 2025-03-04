@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: url_driver
+    restart: always
+    environment:
+      POSTGRES_USER: ${PS_USER}
+      POSTGRES_PASSWORD: ${PS_PASSWORD}
+      POSTGRES_DB: ${PS_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+
+volumes:
+  postgres_data:
+    driver: local
