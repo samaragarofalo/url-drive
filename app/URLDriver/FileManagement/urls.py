@@ -1,9 +1,7 @@
 from django.urls import path
-from rest_framework.urls import urlpatterns
-
-from .views import FileViewSet
+from .protocol.views import upload, download
 
 urlpatterns = [
-    path('files/', FileViewSet.as_view({'post': 'upload'}), name='file-upload'),
-    path('files/<path:file_path>', FileViewSet.as_view({'get': 'download'}), name='file-download'),
+    path('upload/', upload),
+    path('download/<path:file_path>/', download),
 ]
