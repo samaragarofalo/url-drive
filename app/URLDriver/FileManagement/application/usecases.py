@@ -1,4 +1,5 @@
 from FileManagement.domain.models import File, UrlManagement
+from django.shortcuts import get_object_or_404
 import traceback
 
 def save_file(
@@ -9,11 +10,8 @@ def save_file(
     ):
     try:
         url = save_or_get_url(file_path, created_by)
-
-        latest_file = File.objects.filter(
-            file_path=url, 
-            created_by=created_by
-        ).order_by('-id').first()
+        
+        latest_file = get_latest_file(url, created_by)
 
         new_file = File.objects.create(
             file_attachment=file_attachment,
@@ -24,6 +22,21 @@ def save_file(
         )
 
         return new_file
+    
+    except Exception as e:
+        print(e)
+        print(traceback.format_exc())
+
+
+def get_latest_file(
+        file_path,
+        created_by
+):
+    try:
+        return File.objects.filter(
+            file_path=file_path, 
+            created_by=created_by
+        ).order_by('-id').first()
     
     except Exception as e:
         print(e)
@@ -56,17 +69,14 @@ def save_or_get_url(
 def get_file(file_path, version, user):
     try:
         if version:
-            return File.objects.filter(
-                file_path=file_path, 
+            return get_object_or_404(
+                File,
+                file_path__url_path=file_path, 
                 version=version,
                 created_by=user
             ).first()
-
-        return File.objects.filter(
-            file_path=file_path, 
-            version=version,
-            created_by=user
-        ).order_by('-version').first()
+        
+        return get_latest_file(file_path, user)
 
     except Exception as e:
         print(e)
