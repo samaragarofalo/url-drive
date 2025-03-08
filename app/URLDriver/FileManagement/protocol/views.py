@@ -1,11 +1,9 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from FileManagement.application.usecases import save_file, get_file, save_or_get_url
-from django.http import FileResponse, Http404
+from FileManagement.application.usecases import save_file, get_file, save_or_get_url, get_all_urls
+from django.http import FileResponse, Http404, JsonResponse
 import traceback
-
-from FileManagement.domain.models import File
 
 
 @api_view(['POST'])
@@ -41,8 +39,6 @@ def upload(request):
 @api_view(['GET'])
 def download(request, file_path):
     try:
-        print(request.GET.get('version'))
-
         file_name = file_path.rsplit('/', 1)[-1]
         url = file_path.rsplit('/', 1)[0] + '/'
   
@@ -57,6 +53,17 @@ def download(request, file_path):
         
         return FileResponse(file.file_attachment)
     
+    except Exception as e:
+        print(e)
+        print(traceback.format_exc())
+
+
+@api_view(['GET'])
+def get_urls(request):
+    try:
+        urls = get_all_urls(request.user)
+
+        return JsonResponse(urls, safe=False)
     except Exception as e:
         print(e)
         print(traceback.format_exc())

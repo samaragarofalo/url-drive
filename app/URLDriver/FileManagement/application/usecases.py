@@ -81,3 +81,16 @@ def get_file(file_path, version, user):
     except Exception as e:
         print(e)
         print(traceback.format_exc())
+
+
+def get_all_urls(created_by):
+    try:
+        return list(
+            UrlManagement.objects.filter(
+                created_by=created_by
+            ).values()
+        )
+
+    except Exception as e:
+        print(e)
+        print(traceback.format_exc())
