@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Container, TextField, Button, Typography, Paper, Stack, Alert } from '@mui/material';
+import { Container, TextField, Button, Typography, Paper, Stack, Alert, IconButton, InputAdornment } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 const SignUp = () => {
     const [formData, setFormData] = useState({
@@ -12,8 +13,14 @@ const SignUp = () => {
 
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
+    const [showPassword, setShowPassword] = useState(false);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+    
+    const togglePasswordVisibility = () => {
+        setShowPassword((prev) => !prev);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -44,22 +51,86 @@ const SignUp = () => {
     };
 
     return (
-        <Container maxWidth="sm">
-            <Paper elevation={3} sx={{ p: 4, mt: 4 }}>
-                <Typography variant="h4" gutterBottom>
+        <Container 
+        maxWidth="sm"
+        sx={{
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            minHeight: '100vh' 
+        }}
+        >
+            <Paper 
+            elevation={3} 
+            sx={{ p: 4, mt: 4 }}
+            >
+                <Typography 
+                variant="h4" 
+                gutterBottom
+                >
                     Sign Up
                 </Typography>
                 {message && <Stack spacing={2}><Stack direction="row" spacing={3}><Alert severity={message.type}>{message.text}</Alert></Stack></Stack>}
                 <form onSubmit={handleSubmit}>
                     <Stack spacing={2}>
                         <Stack direction="row" spacing={2}>
-                            <TextField label="First Name" name="first_name" fullWidth onChange={handleChange} required />
-                            <TextField label="Last Name" name="last_name" fullWidth onChange={handleChange} required />
+                            <TextField 
+                            label="First Name" 
+                            name="first_name" 
+                            fullWidth 
+                            onChange={handleChange} 
+                            required 
+                            />
+                            <TextField 
+                            label="Last Name" 
+                            name="last_name" 
+                            fullWidth 
+                            onChange={handleChange} 
+                            required 
+                            />
                         </Stack>
-                        <TextField label="Email" name="email" type="email" fullWidth margin="normal" onChange={handleChange} required />
-                        <TextField label="Username" name="username" fullWidth margin="normal" onChange={handleChange} required />
-                        <TextField label="Password" name="password" type="password" fullWidth margin="normal" onChange={handleChange} required />
-                        <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
+                        <TextField 
+                        label="Email" 
+                        name="email" 
+                        type="email" 
+                        fullWidth 
+                        margin="normal" 
+                        onChange={handleChange} 
+                        required 
+                        />
+                        <TextField 
+                        label="Username" 
+                        name="username" 
+                        fullWidth 
+                        margin="normal" 
+                        onChange={handleChange} 
+                        required />
+                        <TextField 
+                        label="Password" 
+                        name="password" 
+                        type={showPassword ? 'text' : 'password'}
+                        fullWidth 
+                        margin="normal" 
+                        onChange={handleChange} 
+                        required
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton onClick={togglePasswordVisibility} edge="end">
+                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
+                        />
+                        <Button 
+                        type="submit" 
+                        variant="contained" 
+                        color="primary" 
+                        fullWidth 
+                        sx={{ mt: 2 }}
+                        >
                             Sign Up
                         </Button>
                     </Stack>
