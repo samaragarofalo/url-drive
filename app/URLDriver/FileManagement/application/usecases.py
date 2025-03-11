@@ -36,7 +36,7 @@ def get_latest_file(
         return File.objects.filter(
             file_path=file_path, 
             created_by=created_by
-        ).order_by('-id').first()
+        ).order_by('-version').first()
     
     except Exception as e:
         print(e)
@@ -69,14 +69,26 @@ def save_or_get_url(
 def get_file(file_path, version, user):
     try:
         if version:
-            return get_object_or_404(
-                File,
-                file_path__url_path=file_path, 
+            return File.objects.filter(
+                file_path=file_path, 
                 version=version,
                 created_by=user
             ).first()
         
         return get_latest_file(file_path, user)
+
+    except Exception as e:
+        print(e)
+        print(traceback.format_exc())
+
+
+def get_all_urls(created_by):
+    try:
+        return list(
+            UrlManagement.objects.filter(
+                created_by=created_by
+            ).values()
+        )
 
     except Exception as e:
         print(e)
