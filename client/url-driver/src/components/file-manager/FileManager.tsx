@@ -36,7 +36,12 @@ const FileManager = () => {
         fetchUrls();
     }, []);
 
-
+    const handleNewUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        const sanitizedValue = value.replace(/[^a-zA-Z0-9-_/]/g, '');
+        setNewUrl(sanitizedValue);
+    };
+    
     const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
             setFiles([...files, ...Array.from(event.target.files)]);
@@ -84,22 +89,50 @@ const FileManager = () => {
     };
 
     return (
-        <Container maxWidth="sm">
-            <Paper elevation={3} sx={{ p: 4, mt: 4 }}>
-                <Typography variant="h4" gutterBottom>File Manager</Typography>
+        <Container 
+        maxWidth="sm"
+        sx={{
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            minHeight: '100vh' 
+        }}
+        >
+            <Paper 
+            elevation={3} 
+            sx={{ p: 4, mt: 4 }}
+            >
+                <Typography 
+                variant="h4" 
+                gutterBottom
+                >
+                    File Manager
+                </Typography>
                 <form onSubmit={handleSubmit}>
                     <TextField 
                     label="Insert URL" 
                     fullWidth 
                     margin="normal" 
                     value={newUrl} 
-                    onChange={(e) => setNewUrl(e.target.value)} 
+                    onChange={handleNewUrlChange} 
                     />
-                    <Typography variant="body1" align="center" sx={{ my: 2 }}>
+                    <Typography 
+                    variant="body1" 
+                    align="center" 
+                    sx={{ my: 2 }}
+                    >
                         OR
                     </Typography>
-                    <FormControl fullWidth margin="normal">
-                        <InputLabel id="url-select-label">Choose from an existing URL</InputLabel>
+                    <FormControl 
+                    fullWidth 
+                    margin="normal"
+                    >
+                        <InputLabel 
+                        id="url-select-label"
+                        >
+                            Choose from an existing URL
+                        </InputLabel>
                         <Select
                             labelId="url-select-label"
                             value={selectedUrl}
@@ -118,8 +151,16 @@ const FileManager = () => {
                     style={{ display: 'none' }}
                     id="file-upload"
                     />
-                    <label htmlFor="file-upload">
-                        <Button variant="contained" component="span" fullWidth>Upload Files</Button>
+                    <label 
+                    htmlFor="file-upload"
+                    >
+                        <Button 
+                        variant="contained" 
+                        component="span" 
+                        fullWidth
+                        >
+                            Upload Files
+                        </Button>
                     </label>
                     <List>
                     {files.map((file, index) => (
@@ -128,7 +169,13 @@ const FileManager = () => {
                         </ListItem>
                     ))}
                     </List>
-                    <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
+                    <Button 
+                    type="submit" 
+                    variant="contained" 
+                    color="primary" 
+                    fullWidth 
+                    sx={{ mt: 2 }}
+                    >
                         Submit
                     </Button>
                 </form>
