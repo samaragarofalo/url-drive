@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './AuthForm.css';
 
 interface AuthFormProps {
@@ -52,6 +53,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ title, buttonText, onSubmit, showEm
         />
         <button type="submit">{buttonText}</button>
       </form>
+      <p>
+        Don't have an account? <Link to="/signup">Sign Up</Link>
+      </p>
     </div>
   );
 };
