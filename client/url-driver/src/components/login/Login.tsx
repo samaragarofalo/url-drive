@@ -16,7 +16,7 @@ const Login: React.FC = () => {
             });
 
             if(!response.ok) {
-                throw new Error('There was an error while tryinh to authenticate.')
+                throw new Error('There was an error while trying to authenticate.')
             }
 
             const data = await response.json();

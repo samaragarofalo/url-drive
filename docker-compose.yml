@@ -1,18 +1,114 @@
+# version: '3.8'
+
+# services:
+#   postgres:
+#     image: postgres:latest
+#     container_name: url_driver_db
+#     restart: always
+#     environment:
+#       POSTGRES_USER: ${PS_USER}
+#       POSTGRES_PASSWORD: ${PS_PASSWORD}
+#       POSTGRES_DB: ${PS_DB}
+#     ports:
+#       - "5432:5432"
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#     env_file:
+#       - .env
+
+#   backend:
+#     build: ./app/URLDriver
+#     container_name: backend
+#     restart: always
+#     depends_on:
+#       - postgres
+#     volumes:
+#       - ./app/URLDriver:/app
+#     ports:
+#       - "8000:8000"
+#     environment:
+#       - PS_USER=${PS_USER}
+#       - PS_PASSWORD=${PS_PASSWORD}
+#       - PS_DB=${PS_DB}
+#     env_file:
+#       - .env
+
+#   frontend:
+#     build: ./client/url-driver
+#     container_name: frontend
+#     restart: always
+#     depends_on:
+#       - backend
+#     volumes:
+#       - ./client/url-driver:/app
+#       - /app/node_modules
+#     ports:
+#       - "5173:5173"
+#     stdin_open: true
+#     tty: true
+
+# volumes:
+#   postgres_data:
+#     driver: local
+
+version: '3.8'
+
 services:
   postgres:
     image: postgres:latest
-    container_name: url_driver
+    container_name: url_driver_db
     restart: always
     environment:
       POSTGRES_USER: ${PS_USER}
       POSTGRES_PASSWORD: ${PS_PASSWORD}
       POSTGRES_DB: ${PS_DB}
+      SECRET_KEY: ${SECRET_KEY}
+      DEBUG: True
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     env_file:
       - .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PS_USER} -d ${PS_DB}"]
+      interval: 5s
+      retries: 5
+
+  backend:
+    build: ./app/URLDriver
+    container_name: backend
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./app/URLDriver:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - PS_USER=${PS_USER}
+      - PS_PASSWORD=${PS_PASSWORD}
+      - PS_DB=${PS_DB}
+    env_file:
+      - .env
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+
+  frontend:
+    build: ./client/url-driver
+    container_name: frontend
+    restart: always
+    depends_on:
+      - backend
+    volumes:
+      - ./client/url-driver:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    stdin_open: true
+    tty: true
 
 volumes:
   postgres_data:
